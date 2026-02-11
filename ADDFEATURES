@@ -1,0 +1,327 @@
+# Image & References
+
+**Coal / Industrial (public domain – Library of Congress)**
+- Dept. Coal Mining (npcc/33514v.jpg)
+- Coal mines (cph/3c20665v.jpg, cph/3c20663v.jpg)
+- Coal miners, Birmingham, Alabama, 1937 (fsa/8a08349r.jpg)
+
+**Beach / Sunset**
+- Tropical_beach_sunset.jpg, Sunset-at-Sea.jpg, Clearwater_Beach_sunset.jpg, SunsetBeach.jpg (Wikimedia Commons)
+- Rawpixel CC0 images
+
+**Docs**
+- GitHub Pages via Actions: actions/configure-pages, upload-pages-artifact, deploy-pages
+- Autoplay policy: see MDN
+- QR API: goqr.me
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Martin’s Retirement Countdown – 3 April 2026</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Countdown to Martin’s retirement with a visual journey from coalface grit to sunset serenity." />
+  <style>
+    :root{
+      --bgA:#2a2a2a; --bgB:#6b5f53; --accent:#ffb703; --text:#fff; --shadow: rgba(0,0,0,0.35);
+      --glass: rgba(0,0,0,0.35); --border: rgba(255,255,255,0.18);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0}
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--text);background:linear-gradient(120deg,var(--bgA),var(--bgB));overflow:hidden}
+    .bg{position:fixed;inset:0;z-index:-1}
+    .bg-layer{position:absolute;inset:0;background-size:cover;background-position:center;background-repeat:no-repeat;transition:opacity 1.2s ease-in-out,filter 1.2s ease-in-out,transform 3s ease-in-out;opacity:0;filter:grayscale(1) sepia(0.5) contrast(1.05) brightness(0.9)}
+    .bg-layer.show{opacity:1}
+    .overlay{position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(1200px 1200px at 70% 80%,rgba(255,153,0,.25),transparent 50%),linear-gradient(120deg,rgba(0,0,0,.35),rgba(0,0,0,.1));mix-blend-mode:soft-light}
+    .container{min-height:100%;display:grid;place-items:center;padding:clamp(12px,2.5vw,36px)}
+    .card{backdrop-filter:blur(6px) saturate(1.1);background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:clamp(16px,4vw,40px);max-width:1024px;width:min(96vw,1024px);box-shadow:0 12px 40px var(--shadow);position:relative}
+    .title{margin:0 0 4px;font-weight:700;font-size:clamp(18px,2.2vw,24px)}
+    .date{margin:0 0 18px;font-size:clamp(13px,1.4vw,16px);opacity:.9}
+    .counter{display:flex;gap:18px;align-items:flex-end;flex-wrap:wrap}
+    .days{font-weight:800;font-size:clamp(56px,10vw,120px);line-height:.9;text-shadow:0 6px 22px var(--shadow)}
+    .timeparts{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:6px}
+    .part{display:flex;align-items:baseline;gap:6px;background:rgba(255,255,255,.08);padding:10px 14px;border-radius:12px}
+    .num{font-weight:800;font-size:clamp(28px,5vw,54px)} .unit{opacity:.9;font-size:clamp(12px,2vw,16px)}
+    .label{font-size:clamp(16px,2.2vw,22px);opacity:.92;margin-left:6px;margin-bottom:4px}
+    .sub{margin-top:8px;font-size:clamp(13px,1.7vw,18px);opacity:.9}
+    .bar-wrap{margin-top:14px;width:100%;height:10px;background:rgba(255,255,255,.18);border-radius:999px;overflow:hidden}
+    .bar{height:100%;width:0%;background:linear-gradient(90deg,#ff7a18,var(--accent));transition:width 1s ease-in-out}
+    .foot{margin-top:14px;font-size:clamp(12px,1.3vw,14px);opacity:.85;display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+
+    .toolbar{position:absolute;top:10px;right:10px;display:flex;gap:8px}
+    .btn{appearance:none;border:1px solid var(--border);background:rgba(255,255,255,.1);color:var(--text);padding:8px 12px;border-radius:999px;cursor:pointer;font-size:14px;backdrop-filter:blur(6px)}
+    .select{border:1px solid var(--border);background:rgba(255,255,255,.1);color:var(--text);padding:8px 10px;border-radius:10px}
+
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:20}
+    .modal .panel{background:#111a;border:1px solid var(--border);backdrop-filter:blur(8px);border-radius:12px;padding:18px;width:min(92vw,520px);color:#fff}
+    .modal.show{display:flex}
+
+    .celebrate .card{background:rgba(0,0,0,0.28);border-color:rgba(255,255,255,0.25)}
+    .confetti{position:fixed;inset:0;pointer-events:none;z-index:10}
+    .confetti span{position:absolute;top:-20px;font-size:18px;animation:fall linear forwards;opacity:.9;filter:drop-shadow(0 2px 2px rgba(0,0,0,.3))}
+    @keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+
+    .visually-hidden{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap}
+  </style>
+</head>
+<body>
+  <div class="bg" aria-hidden="true"><div class="bg-layer" id="bgA"></div><div class="bg-layer" id="bgB"></div></div>
+  <div class="overlay" aria-hidden="true"></div>
+
+  <div class="container" id="app">
+    <div class="card" role="group" aria-labelledby="title">
+      <div class="toolbar">
+        <select id="themeSelect" class="select" title="Theme">
+          <option value="classic">Classic</option>
+          <option value="corporate">Corporate</option>
+          <option value="beach">Beach</option>
+          <option value="afterglow">After‑retirement</option>
+        </select>
+        <button class="btn" id="musicBtn" title="Toggle background music">🎵 Music</button>
+        <button class="btn" id="qrBtn" title="Show QR code">🔗 QR</button>
+      </div>
+
+      <h1 class="title" id="title">Martin’s Retirement Countdown</h1>
+      <p class="date" id="targetText">Target date: 3 April 2026 (Friday)</p>
+
+      <div class="counter" aria-live="polite">
+        <div>
+          <div class="days" id="daysNum">—</div>
+          <div class="label" id="daysLabel">days to go</div>
+        </div>
+        <div class="timeparts">
+          <div class="part"><div class="num" id="hoursNum">—</div><div class="unit">hours</div></div>
+          <div class="part"><div class="num" id="minsNum">—</div><div class="unit">minutes</div></div>
+          <div class="part"><div class="num" id="secsNum">—</div><div class="unit">seconds</div></div>
+        </div>
+      </div>
+
+      <div class="bar-wrap" aria-hidden="true"><div class="bar" id="bar"></div></div>
+      <div class="sub" id="stageText">Warming up the sunset…</div>
+
+      <p class="foot">
+        <span>Tip: click <strong>🎵 Music</strong> after the page loads. Browsers block autoplay with sound until you interact.</span>
+      </p>
+    </div>
+  </div>
+
+  <p class="visually-hidden" id="bgDesc">Background showing historical industrial work scenes transitioning to serene seaside sunsets.</p>
+  <div class="confetti" id="confetti" aria-hidden="true"></div>
+
+  <!-- QR Modal -->
+  <div class="modal" id="qrModal" role="dialog" aria-labelledby="qrTitle" aria-modal="true">
+    <div class="panel">
+      <h2 id="qrTitle" style="margin-top:0">Share this countdown</h2>
+      <p>Scan or download the QR code to open this page on your phone.</p>
+      <div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap">
+        <img id="qrImg" alt="QR code" width="220" height="220" style="border-radius:8px;border:1px solid #ffffff33"/>
+        <div>
+          <button class="btn" id="qrDownload">⬇️ Download PNG</button>
+          <button class="btn" id="qrClose">Close</button>
+        </div>
+      </div>
+      <p style="opacity:.8;margin-top:10px;font-size:13px">Generated via a public QR API when you open this dialog.</p>
+    </div>
+  </div>
+
+  <audio id="bgm" preload="none" src="assets/sunset.mp3"></audio>
+
+  <script>
+    // ===== Config =====
+    const retirementDate = new Date(2026, 3, 3, 0, 0, 0);  // local time
+    const journeyStartDate = null; // e.g., new Date(2024,3,3)
+
+    // Curated remote images
+    const coalImages = [
+      'https://tile.loc.gov/storage-services/service/pnp/npcc/33500/33514v.jpg',
+      'https://tile.loc.gov/storage-services/service/pnp/cph/3c20000/3c20600/3c20665v.jpg',
+      'https://tile.loc.gov/storage-services/service/pnp/cph/3c20000/3c20600/3c20663v.jpg',
+      'https://tile.loc.gov/storage-services/service/pnp/fsa/8a08000/8a08300/8a08349r.jpg',
+    ];
+    const transitionImages = [
+      'https://images.rawpixel.com/image_social_landscape/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTA0L3Vwd2s2MjExMTk4NC13aWtpbWVkaWEtaW1hZ2Uta293bnJhdjAuanBn.jpg',
+      'https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/upwk48737248-wikimedia-image.jpg?w=1200&h=1200&dpr=1&fit=clip&crop=default&fm=jpg&q=75&vib=3&con=3&usm=15&cs=srgb&bg=F4F4F3&ixlib=js-2.2.1&s=f7a97954330c776a27466319388b3b1a',
+      'https://upload.wikimedia.org/wikipedia/commons/0/0b/Sunset-at-Sea.jpg',
+      'https://upload.wikimedia.org/wikipedia/commons/c/c8/Clearwater_Beach_sunset.jpg',
+    ];
+    const beachImages = [
+      'https://upload.wikimedia.org/wikipedia/commons/3/31/Tropical_beach_sunset.jpg',
+      'https://upload.wikimedia.org/wikipedia/commons/0/0b/Sunset-at-Sea.jpg',
+      'https://upload.wikimedia.org/wikipedia/commons/c/c8/Clearwater_Beach_sunset.jpg',
+      'https://upload.wikimedia.org/wikipedia/commons/5/57/SunsetBeach.jpg',
+    ];
+    const sunsetImages = [
+      'https://upload.wikimedia.org/wikipedia/commons/3/31/Tropical_beach_sunset.jpg',
+      'https://upload.wikimedia.org/wikipedia/commons/0/0b/Sunset-at-Sea.jpg',
+      'https://upload.wikimedia.org/wikipedia/commons/c/c8/Clearwater_Beach_sunset.jpg',
+    ];
+
+    const imageSwapMs = 10000;
+
+    // ===== Helpers =====
+    const clamp = (v,min,max)=> Math.max(min, Math.min(max,v));
+    const startOfDay = (d)=> new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    const daysBetween = (a,b)=> Math.ceil((startOfDay(b)-startOfDay(a))/86400000);
+
+    const getStage = (daysLeft)=> daysLeft<=0?'celebrate': daysLeft<=14?'sunset': daysLeft<=60?'beach': daysLeft<=120?'transition2': daysLeft<=365?'transition1':'coal';
+    const poolForStage = (stage)=> ({coal:coalImages, transition1:transitionImages, transition2:transitionImages, beach:beachImages, sunset:sunsetImages, celebrate:sunsetImages}[stage]||transitionImages);
+    const stageDescription = (s)=>({
+      coal:'Early days: gritty, sepia-toned industrial scenes.',
+      transition1:'Shifting: from grayscale to hints of color.',
+      transition2:'Warmer tones arriving—balance of work and rest.',
+      beach:'Coastal calm—sand, sky, and slower pace.',
+      sunset:'Final stretch: golden-hour sunsets.',
+      celebrate:'You made it! Time to enjoy the view.'
+    }[s]||'');
+
+    const preloadAll = ()=>{ [...new Set([...coalImages,...transitionImages,...beachImages,...sunsetImages])].forEach(src=>{ const i=new Image(); i.src=src; }); };
+
+    function applyTheme(name){
+      const root = document.documentElement;
+      if(name==='classic'){ root.style.setProperty('--bgA','#2a2a2a'); root.style.setProperty('--bgB','#6b5f53'); root.style.setProperty('--accent','#ffb703'); root.style.setProperty('--glass','rgba(0,0,0,.35)'); root.style.setProperty('--border','rgba(255,255,255,.18)'); }
+      if(name==='corporate'){ root.style.setProperty('--bgA','#0b1e3a'); root.style.setProperty('--bgB','#243b55'); root.style.setProperty('--accent','#1abc9c'); root.style.setProperty('--glass','rgba(10,20,40,.45)'); root.style.setProperty('--border','rgba(200,220,255,.18)'); }
+      if(name==='beach'){ root.style.setProperty('--bgA','#1f3b73'); root.style.setProperty('--bgB','#fcbf49'); root.style.setProperty('--accent','#f77f00'); root.style.setProperty('--glass','rgba(0,0,0,.28)'); root.style.setProperty('--border','rgba(255,255,255,.25)'); }
+      if(name==='afterglow'){ root.style.setProperty('--bgA','#0d1b2a'); root.style.setProperty('--bgB','#ff6b6b'); root.style.setProperty('--accent','#ffd166'); root.style.setProperty('--glass','rgba(0,0,0,.28)'); root.style.setProperty('--border','rgba(255,255,255,.25)'); }
+      localStorage.setItem('rc_theme', name);
+    }
+
+    function buildQR(url){
+      // Using goqr.me public API; generates an image URL
+      const api = 'https://api.qrserver.com/v1/create-qr-code/';
+      const u = api + '?size=300x300&data=' + encodeURIComponent(url);
+      return u;
+    }
+
+    function burstConfetti(){
+      const holder = document.getElementById('confetti');
+      holder.innerHTML=''; const pieces=120; const glyphs=['🎉','✨','🌅','🍹','🏖️','🌞','🌊','🎊'];
+      for(let i=0;i<pieces;i++){ const el=document.createElement('span'); el.textContent=glyphs[Math.floor(Math.random()*glyphs.length)]; el.style.left=Math.random()*100+'vw'; el.style.animationDuration=(6+Math.random()*5)+'s'; el.style.animationDelay=(Math.random()*2)+'s'; holder.appendChild(el); }
+      setTimeout(()=> holder.innerHTML='', 15000);
+    }
+
+    function updateTime(){
+      const now = new Date();
+      let diff = retirementDate - now;
+      const daysNum = document.getElementById('daysNum');
+      const daysLabel = document.getElementById('daysLabel');
+      const hEl = document.getElementById('hoursNum');
+      const mEl = document.getElementById('minsNum');
+      const sEl = document.getElementById('secsNum');
+      if(diff<=0){ daysNum.textContent='🎉'; daysLabel.textContent='Happy retirement!'; hEl.textContent=mEl.textContent=sEl.textContent='00'; document.body.classList.add('celebrate'); return 'done'; }
+      const day=86400000,hour=3600000,min=60000,sec=1000;
+      const days=Math.floor(diff/day); diff%=day; const hours=Math.floor(diff/hour); diff%=hour; const mins=Math.floor(diff/min); diff%=min; const secs=Math.floor(diff/sec);
+      daysNum.textContent=String(days);
+      daysLabel.textContent=(days===1?'day':'days')+' to go';
+      hEl.textContent=String(hours).padStart(2,'0');
+      mEl.textContent=String(mins).padStart(2,'0');
+      sEl.textContent=String(secs).padStart(2,'0');
+      return days;
+    }
+
+    (function init(){
+      preloadAll();
+
+      // Theme init
+      const savedTheme = localStorage.getItem('rc_theme')||'classic';
+      document.getElementById('themeSelect').value = savedTheme;
+      applyTheme(savedTheme);
+      document.getElementById('themeSelect').addEventListener('change', e=> applyTheme(e.target.value));
+
+      // Music toggle (user gesture required)
+      const musicBtn = document.getElementById('musicBtn');
+      const audio = document.getElementById('bgm');
+      function updateMusicBtn(){ musicBtn.textContent = audio.paused ? '🎵 Music' : '⏸️ Pause'; }
+      musicBtn.addEventListener('click', async ()=>{ try{ if(audio.paused){ await audio.play(); } else { audio.pause(); } } catch(e){ alert('Could not start audio. Click again or check that assets/sunset.mp3 exists.'); } updateMusicBtn(); });
+
+      // QR Modal
+      const qrBtn = document.getElementById('qrBtn');
+      const qrModal = document.getElementById('qrModal');
+      const qrClose = document.getElementById('qrClose');
+      const qrDownload = document.getElementById('qrDownload');
+      const qrImg = document.getElementById('qrImg');
+      qrBtn.addEventListener('click', ()=>{ qrImg.src = buildQR(window.location.href); qrModal.classList.add('show'); });
+      qrClose.addEventListener('click', ()=> qrModal.classList.remove('show'));
+      qrDownload.addEventListener('click', ()=>{ const a=document.createElement('a'); a.href=qrImg.src; a.download='retirement-qr.png'; document.body.appendChild(a); a.click(); a.remove(); });
+      qrModal.addEventListener('click', (e)=>{ if(e.target===qrModal) qrModal.classList.remove('show'); });
+
+      const stageText = document.getElementById('stageText');
+      const bar = document.getElementById('bar');
+      const bgA = document.getElementById('bgA');
+      const bgB = document.getElementById('bgB');
+      const bgDesc = document.getElementById('bgDesc');
+
+      const daysLeft = daysBetween(new Date(), retirementDate);
+      const stage = getStage(daysLeft);
+
+      // Progress bar
+      if (journeyStartDate instanceof Date){
+        const total = daysBetween(journeyStartDate, retirementDate);
+        const done = total - Math.max(0, daysLeft);
+        bar.style.width = clamp((done/Math.max(1,total))*100, 0, 100) + '%';
+      } else {
+        const p = clamp(1 - (daysLeft/365), 0, 1);
+        bar.style.width = (p*100) + '%';
+      }
+
+      stageText.textContent = stageDescription(stage);
+      bgDesc.textContent = 'Background theme: ' + stageDescription(stage);
+
+      // Warmth filters
+      const nostalgia = clamp(daysLeft/365, 0, 1);
+      const grayscaleAmt = clamp(nostalgia, 0, 1);
+      const sepiaAmt = clamp(nostalgia * 0.6, 0, 0.6);
+      const brightnessAmt = 0.95 + (1 - nostalgia)*0.1;
+
+      // Image cycling
+      const images = poolForStage(stage);
+      let idx = 0, useA = true;
+      function setBg(el, url){ el.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.15)), url("${url}")`; el.style.filter = `grayscale(${grayscaleAmt}) sepia(${sepiaAmt}) contrast(1.06) brightness(${brightnessAmt})`; el.style.transform = (stage === 'coal') ? 'scale(1.05)' : 'scale(1.02)'; }
+      if (!images.length){ bgA.style.background = 'linear-gradient(120deg, #333, #555)'; bgB.style.background = 'linear-gradient(120deg, #444, #666)'; bgA.classList.add('show'); }
+      else { setBg(bgA, images[0]); bgA.classList.add('show'); if (images[1]) setBg(bgB, images[1]); }
+      function swap(){ if (!images.length) return; idx = (idx + 1) % images.length; if (useA){ setBg(bgB, images[idx]); bgB.classList.add('show'); bgA.classList.remove('show'); } else { setBg(bgA, images[idx]); bgA.classList.add('show'); bgB.classList.remove('show'); } useA = !useA; }
+      setInterval(swap, imageSwapMs);
+
+      // Stage color set (base)
+      const root = document.documentElement;
+      if (stage === 'coal'){ root.style.setProperty('--bgA','#242424'); root.style.setProperty('--bgB','#5c5247'); root.style.setProperty('--accent','#d4a373'); }
+      else if (stage === 'transition1'){ root.style.setProperty('--bgA','#3a3430'); root.style.setProperty('--bgB','#7a6555'); root.style.setProperty('--accent','#f4a261'); }
+      else if (stage === 'transition2'){ root.style.setProperty('--bgA','#3b3d40'); root.style.setProperty('--bgB','#876c5a'); root.style.setProperty('--accent','#ffb703'); }
+      else if (stage === 'beach'){ root.style.setProperty('--bgA','#1f3b73'); root.style.setProperty('--bgB','#fcbf49'); root.style.setProperty('--accent','#f77f00'); }
+      else if (stage === 'sunset'){ root.style.setProperty('--bgA','#0d1b2a'); root.style.setProperty('--bgB','#ff6b6b'); root.style.setProperty('--accent','#ffd166'); }
+
+      if (stage === 'celebrate'){ document.body.classList.add('celebrate'); burstConfetti(); }
+
+      // Live time updater
+      updateTime();
+      const timer = setInterval(()=>{ const r = updateTime(); if (r==='done'){ clearInterval(timer); burstConfetti(); } }, 1000);
+
+      // Refresh daily near midnight
+      const now = new Date();
+      const msToMidnight = (new Date(now.getFullYear(), now.getMonth(), now.getDate()+1) - now) + 500;
+      setTimeout(() => location.reload(), msToMidnight);
+    })();
+  </script>
+</body>
+</html>
+
+# Retirement Countdown – Extras Edition
+
+This edition adds:
+- **Theme switcher** (Classic, Corporate, Beach, After‑retirement)
+- **Background music toggle** (`assets/sunset.mp3`) with user‑gesture playback
+- **QR code modal** that generates a QR for the current page URL (via `api.qrserver.com`)
+- **GitHub Actions** workflow for automatic Pages deployment
+
+## Quick start
+1. Create a public repo and push these files.
+2. In **Settings → Pages**, set Source to **GitHub Actions** (uses the included workflow).
+3. Commit changes to `main`—deployment runs automatically.
+
+## Customise
+- Change target time in `index.html`: `new Date(2026, 3, 3, 17, 0, 0)`
+- Put a background track at `assets/sunset.mp3` (non‑autoplay; click the 🎵 button)
+- Swap image URLs in the four arrays near the top of the script.
+
+## Notes
+- Modern browsers block autoplay with sound until a user interacts (e.g., clicking the 🎵 button).
+- The QR modal uses a third‑party public API; if you prefer no external calls, we can embed a local JS QR generator in a future update.
